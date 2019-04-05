@@ -3,29 +3,31 @@ version: '3'
 services:
 
   rabbit-mq:
-    image: rabbitmq:alpine
+    image: rabbitmq
     environment:
       RABBITMQ_ERLANG_COOKIE: "BLABLABLA"
       RABBITMQ_DEFAULT_VHOST: "/"
     ports:
-        # - "15672:15672"
-        - "6000:6000"
+        - "15672:15672"
+        - "6000:15672"
 
   redis:
-    image: redis:alpine
+    image: redis
     ports:
         - "6379:6379"
 
 
 
-  # reviews:
-  #   build: 
-  #     context: ./review
-  #     dockerfile: Dockerfile
-  #   command:  bash -c "sleep 10; java -jar ./target/Reviews-2.0.1-SNAPSHOT-jar-with-dependencies.jar;"
-  #   depends_on:
-  #     - rabbit-mq
-  #     - server
+  reviews:
+    build: 
+      context: ./review
+      dockerfile: Dockerfile
+    environment:
+        RABBIT_MQ_SERVICE_HOST: rabbit-mq
+    command:  bash -c "sleep 10; java -jar ./target/Reviews-2.0.1-SNAPSHOT-jar-with-dependencies.jar;"
+    depends_on:
+      - rabbit-mq
+      - server
 
   server:
     # image: hazemsalah/micro_services:server_service 
