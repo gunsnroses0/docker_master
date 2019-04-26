@@ -18,26 +18,27 @@ services:
 
 
 
-  plates:
-    image: hazemsalah/micro_services:plates_service
-    # build: 
-    #   context: ./micro_services/plate
-    #   dockerfile: Dockerfile
-    environment:
-        RABBIT_MQ_SERVICE_HOST: rabbit-mq
-    command:  bash -c "sleep 10; java -jar ./target/Plates-2.0.1-SNAPSHOT-jar-with-dependencies.jar;"
-    depends_on:
-      - rabbit-mq
-      - server
+  # reviews:
+  #   image: hazemsalah/micro_services:reviews_service
+  #   # build: 
+  #   #   context: ./micro_services/plate
+  #   #   dockerfile: Dockerfile
+  #   environment:
+  #       RABBIT_MQ_SERVICE_HOST: rabbit-mq
+        
+  #   command:  bash -c "sleep 10; java -jar ./target/Reviews-2.0.1-SNAPSHOT-jar-with-dependencies.jar;"
+  #   depends_on:
+  #     - rabbit-mq
+  #     - server
 
-  server:
-    image: hazemsalah/micro_services:server_service 
-    # build: 
-    #   context: ./server
-    #   dockerfile: Dockerfile
-    command:  bash -c "sleep 10; java -jar ./target/Server-2.0.1-SNAPSHOT-jar-with-dependencies.jar;"
-    ports:
-        - "4000:8080"
-    depends_on:
-        - rabbit-mq
-        - redis
+  # server:
+  #   image: hazemsalah/micro_services:server_service 
+  #   build: 
+  #     context: ./server
+  #     dockerfile: Dockerfile
+  #   command:  bash -c "sleep 10; java -jar ./target/Server-2.0.1-SNAPSHOT-jar-with-dependencies.jar;"
+  #   ports:
+  #       - "4000:8080"
+  #   depends_on:
+  #       - rabbit-mq
+  #       - redis

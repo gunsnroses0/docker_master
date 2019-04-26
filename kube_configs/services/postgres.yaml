@@ -1,0 +1,75 @@
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: postgres
+# spec:
+#   selector:
+#     app: postgres
+#   ports:
+#   - name: "5432"
+#     port: 5432
+#     targetPort: 5432
+# -----
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: postgres
+#   labels:
+#     app: postgres
+# spec:
+#   type: NodePort
+#   ports:
+#    - port: 5432
+#   selector:
+#    app: postgres
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-service
+  labels:
+    name: postgres
+spec:
+  ports:
+  - port: 5432
+    targetPort: 5432
+  clusterIP: None
+  selector:
+    role: postgres
+---
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  name: postgresd
+spec:
+  serviceName: postgres-service
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        role: postgres
+        environment: test-postgres
+        replicaset: MainRepSet-Postgres
+    spec:
+      terminationGracePeriodSeconds: 10
+      volumes:
+        - name: data-volume-psql
+      containers:
+        - name: postgresd-container
+          image: hazemsalah/micro_services:psql_service
+          ports:
+            - containerPort: 5432
+          volumeMounts:
+            - name: data-volume-psql
+              readOnly: true
+            - name: psql-persistent-volume-claim
+              mountPath: /data/psqldb
+  volumeClaimTemplates:
+  - metadata:
+      name: psql-persistent-volume-claim
+      annotations:
+        volume.beta.kubernetes.io/storage-class: "fast"
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 5Gi
