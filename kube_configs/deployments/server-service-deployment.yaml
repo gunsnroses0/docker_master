@@ -17,6 +17,9 @@ spec:
       containers:
       - name: server-service
         image: hazemsalah/micro_services:server_service
+        env:
+        - name: RABBIT_MQ_SERVICE_HOST
+          value: rabbit-mq 
         args:
         - bash
         - -c
