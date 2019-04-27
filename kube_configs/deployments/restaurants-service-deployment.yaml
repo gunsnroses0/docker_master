@@ -1,0 +1,32 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: restaurants
+  labels:
+    app: restaurants
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: restaurants
+  template:
+    metadata:
+      labels:
+        app: restaurants
+    spec:
+      containers:
+      - name: restaurants-service
+        image: hazemsalah/micro_services:restaurants_service
+        env:
+        - name: RABBIT_MQ_SERVICE_HOST
+          value: rabbit-mq 
+        - name: MONGO_URI
+          value: mongodb://admin:admin@mongod-0.mongodb-service.default.svc.cluster.local:27017/El-Menus?authSource=admin
+        args:
+        - bash
+        - -c
+        - sleep 10; java -jar ./target/Restaurants-2.0.1-SNAPSHOT-jar-with-dependencies.jar;
+        ports:
+        - containerPort: 6380
+        imagePullPolicy: Always
+      restartPolicy: Always

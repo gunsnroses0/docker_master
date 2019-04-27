@@ -1,0 +1,32 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: orders
+  labels:
+    app: orders
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: orders
+  template:
+    metadata:
+      labels:
+        app: orders
+    spec:
+      containers:
+      - name: orders-service
+        image: hazemsalah/micro_services:orders_service
+        env:
+        - name: RABBIT_MQ_SERVICE_HOST
+          value: rabbit-mq 
+        - name: MONGO_URI
+          value: mongodb://admin:admin@mongod-0.mongodb-service.default.svc.cluster.local:27017/El-Menus?authSource=admin
+        args:
+        - bash
+        - -c
+        - sleep 10; java -jar ./target/Orders-2.0.1-SNAPSHOT-jar-with-dependencies.jar;
+        ports:
+        - containerPort: 6380
+        imagePullPolicy: Always
+      restartPolicy: Always
